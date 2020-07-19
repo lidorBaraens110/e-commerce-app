@@ -16,9 +16,9 @@ const SortClothe = ({ value, onChange, price, date, name }) => {
                     value={value}
                     onChange={onChange}
                 >
-                    <MenuItem value={price}>לפי מחיר</MenuItem>
-                    <MenuItem value={date}>לפי תאריך העלאה</MenuItem>
-                    <MenuItem value={name}>לפי א-ב</MenuItem>
+                    <MenuItem value={'price'}>לפי מחיר</MenuItem>
+                    <MenuItem value={'date'}>לפי תאריך העלאה</MenuItem>
+                    <MenuItem value={'name'}>לפי א-ב</MenuItem>
                 </Select>
                 <InputLabel id="demo-simple-select-label" style={{ marginLeft: '5rem' }}  >סינון לפי</InputLabel>
             </FormControl>

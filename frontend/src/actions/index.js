@@ -1,3 +1,22 @@
+export const newCollection = () => {
+    return {
+        type: 'NEW_COLLECTION'
+    }
+}
+
+export const initial = (items) => {
+    return {
+        type: 'INITIAL',
+        payload: items
+    }
+}
+
+export const sortState = (sortValue) => {
+    return {
+        type: 'SORT',
+        payload: sortValue
+    }
+}
 export const addToCart = (item) => {
     return {
         type: 'ADD_TO_CART',

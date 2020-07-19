@@ -9,15 +9,30 @@ const initialState = {
 
 const itemsReducer = (state = initialState, { type, payload }) => {
     switch (type) {
+        case 'INITIAL':
+            return { ...state, items: payload }
         case 'SELECT_TYPE':
             return { ...state, selected: state.items.filter(item => item.bodyBuild === payload || item.type === payload) }
+        case 'SORT':
+            console.log(payload)
+            return {
+                ...state, selected: state.selected.sort((a, b) => {
+                    return a.price - b.price
+                })
+            }
+        case 'NEW_COLLECTION':
+            return {
+                ...state, selected: state.items.sort((a, b) => {
+                    return b.date - a.date
+                }).slice(0, 2)
+            }
         case 'ADD_TO_CART':
             return { ...state, cart: [...state.cart, payload] }
         case 'EDIT_ITEM':
             return {
                 ...state,
                 cart: state.cart.map(item => {
-                    if (item.id !== payload.id) {
+                    if (item._id !== payload._id) {
                         console.log('שונה')
                         // This isn't the item we care about - keep it as-is
                         return item
@@ -31,7 +46,7 @@ const itemsReducer = (state = initialState, { type, payload }) => {
                 })
             }
         case 'REMOVE_FROM_CART':
-            return { ...state, cart: state.cart.filter(item => item.id !== payload) }
+            return { ...state, cart: state.cart.filter(item => item._id !== payload) }
         case 'ADD_TO_WISHLIST':
             return {
                 ...state, wishList: [...state.wishList, payload]
@@ -40,17 +55,17 @@ const itemsReducer = (state = initialState, { type, payload }) => {
             console.log(payload)
             return {
                 ...state, ...state.items.map(item => {
-                    if (payload.id === item.id)
+                    if (payload._id === item._id)
                         return item.wishList = !item.wishList
                 })
             }
         case 'REMOVE_FROM_WISHLIST':
-            return { ...state, wishList: state.wishList.filter(clothe => clothe.id !== payload) }
+            return { ...state, wishList: state.wishList.filter(item => item._id !== payload) }
 
         case 'MOUSE_OVER':
             return {
                 ...state, selected: state.selected.map(item => {
-                    if (item.id === payload) {
+                    if (item._id === payload) {
                         return { ...item, currentImage: 1 }
                     } else {
                         return item
@@ -60,7 +75,7 @@ const itemsReducer = (state = initialState, { type, payload }) => {
         case 'MOUSE_OUT':
             return {
                 ...state, selected: state.selected.map(item => {
-                    if (item.id === payload) {
+                    if (item._id === payload) {
                         return { ...item, currentImage: 0 }
                     } else {
                         return item

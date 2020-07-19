@@ -14,11 +14,9 @@ const Heading = (prop) => {
     const handleSideBar = () => {
         setSideBar(preValue => !preValue);
     }
-
-
     return (
-        <div >
-            <TheDrawer handleSideBar={handleSideBar} open={sideBar} />
+        <div>
+            <TheDrawer handleSideBar={handleSideBar} open={sideBar} onClose={handleSideBar} />
             <h2 style={styles.aboveHeading}>בקנייה מעל 199 ש"ח משלוחים חינם</h2>
             <header className={prop.className} style={prop.styles}>
                 <div

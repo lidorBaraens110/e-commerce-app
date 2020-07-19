@@ -3,10 +3,14 @@ import { Link } from 'react-router-dom';
 import { Grid, Card, CardContent, Button } from '@material-ui/core';
 import data from '../../data/allClothes';
 import StandardCard from '../sideComponent/standardCard';
-import CostumeCard from '../sideComponent/costumeCard'
+import CostumeCard from '../sideComponent/costumeCard';
+import { initial } from '../../actions';
+import { useDispatch } from 'react-redux'
 import axios from 'axios';
 
 const Home = () => {
+
+    const dispatch = useDispatch();
     const [buyTheLook, setBuyTheLook] = useState(data.buyTheLook);
     const handleExpand = (x) => {
         const currentItem = buyTheLook.filter(item => item.bTL.id === x)
@@ -16,7 +20,11 @@ const Home = () => {
     }
     useEffect(() => {
         axios.get('http://localhost:5000/items')
-            .then(res => console.log(res)).catch(err => console.log(err))
+            .then(res => {
+                dispatch(initial(res.data))
+            })
+            .catch(err => console.log(err))
+
     }, [])
     const handle = () => {
         alert('lakfnslka')

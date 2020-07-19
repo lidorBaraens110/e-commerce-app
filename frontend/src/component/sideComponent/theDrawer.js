@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const TheDrawer = ({ handleSideBar, open }) => {
+const TheDrawer = ({ handleSideBar, open, onClose }) => {
     const classes = useStyles();
     const [expandBody, setExpand] = useState(false);
     const [expandClothe, setExpandClothe] = useState(false);
@@ -25,7 +25,8 @@ const TheDrawer = ({ handleSideBar, open }) => {
     const clothe = ['מכנס', 'חולצה', 'בגד ים', 'שמלה']
 
     return (
-        <Drawer style={{ width: "350px" }} classes={{ paper: classes.drawerPaper }} anchor="right" open={open}  >
+        <Drawer onClose={onClose} style={{ width: "350px" }}
+            classes={{ paper: classes.drawerPaper }} anchor="right" open={open}  >
             <List className='text'>
                 <HighlightOffIcon style={{ cursor: 'pointer' }} onClick={handleSideBar} />
 

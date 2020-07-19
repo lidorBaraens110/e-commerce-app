@@ -63,8 +63,8 @@ const AddToChart = (props) => {
 
     const handleButton = (name) => {
 
-        const { s, md, lg, xl } = item;
-        const array = [s, md, lg, xl];
+        const { s, m, l, xl } = item;
+        const array = [s, m, l, xl];
         const currentSize = array.filter(size => size.name === name);
         const otherSize = array.filter(size => size.name !== name);
         currentSize[0].a = 'true'
@@ -134,8 +134,8 @@ const AddToChart = (props) => {
 
                         <div style={{ display: 'flex', flexDirection: 'row', margin: '1rem 0' }}>
                             <ButtonSize selected={item.s.a} children='s' onClick={() => handleButton('s')} className={classes.sizeButton} />
-                            <ButtonSize selected={item.md.a} children='m' onClick={() => handleButton('md')} className={classes.sizeButton} />
-                            <ButtonSize selected={item.lg.a} children='l' onClick={() => handleButton('lg')} className={classes.sizeButton} />
+                            <ButtonSize selected={item.m.a} children='m' onClick={() => handleButton('m')} className={classes.sizeButton} />
+                            <ButtonSize selected={item.l.a} children='l' onClick={() => handleButton('l')} className={classes.sizeButton} />
                             <ButtonSize selected={item.xl.a} children='xl' onClick={() => handleButton('xl')} className={classes.sizeButton} />
                         </div>
 

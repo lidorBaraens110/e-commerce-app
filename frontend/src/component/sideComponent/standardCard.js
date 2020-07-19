@@ -28,6 +28,7 @@ export default function StandardCard({ style, image, name, remove, onMousesOver,
     return (
         <Card className={classes.root} style={style}>
             <CardMedia
+                component='img'
                 onMouseOver={onMousesOver}
                 onMouseOut={onMouseOut}
                 className={classes.media}
