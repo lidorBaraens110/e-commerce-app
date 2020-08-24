@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 
@@ -14,21 +14,22 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const TotalPay = () => {
+const TotalPay = ({ cartItems }) => {
     const classes = useStyles();
-
     return (
         <Grid container className={classes.container}
             spacing={5}>
             <Grid item
                 xs={6} s={6} m={6} lg={6} xl={6} style={{ textAlign: 'right', alignItems: 'center' }}>
                 <h3 style={{ fontWeight: '500' }}>סך הכל</h3>
-                <p >כולל מע"מ 108 ש"ח</p>
+                <p>כולל מע"מ 108 ש"ח</p>
 
             </Grid>
             <Grid item
                 xs={6} s={6} m={6} lg={6} xl={6} style={{ textAlign: 'left' }}>
-                <p>מחיר</p>
+                <p>{cartItems.reduce((sum, item) => {
+                    return sum + item.price * item.countSelected
+                }, 0)}</p>
             </Grid>
         </Grid>
     );

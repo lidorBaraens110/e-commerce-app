@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { ListItem, List, Divider, ListItemText, ListItemIcon } from '@material-ui/core';
+import { ListItem, List, Divider, Input, ListItemText, ListItemIcon, TextField } from '@material-ui/core';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import SearchIcon from '@material-ui/icons/Search';
 import FacebookIcon from '@material-ui/icons/Facebook';
@@ -22,7 +22,7 @@ const TheDrawer = ({ handleSideBar, open, onClose }) => {
     const [expandBody, setExpand] = useState(false);
     const [expandClothe, setExpandClothe] = useState(false);
     const bodyBuild = ['אגסי', 'שעון חול', 'מלבני', 'משולש הפוך'];
-    const clothe = ['מכנס', 'חולצה', 'בגד ים', 'שמלה']
+    const clothe = ['מכנס', 'חולצה', 'בגד ים', 'שמלה'];
 
     return (
         <Drawer onClose={onClose} style={{ width: "350px" }}
@@ -30,18 +30,20 @@ const TheDrawer = ({ handleSideBar, open, onClose }) => {
             <List className='text'>
                 <HighlightOffIcon style={{ cursor: 'pointer' }} onClick={handleSideBar} />
 
-                <ListItem button style={{ textAlign: 'right' }}>
-                    <ListItemIcon><SearchIcon /> </ListItemIcon>
-                    <ListItemText primary={'חיפוש'} onClick={handleSideBar} />
-                </ListItem>
+                <Link to="/search">
+                    <ListItem button style={{ textAlign: 'right' }} onClick={handleSideBar}>
+                        <ListItemIcon><SearchIcon /> </ListItemIcon>
+                        <ListItemText primary={'חיפוש'} />
+                    </ListItem>
+                </Link>
                 <Divider />
 
                 <Link to={{
                     pathname: '/feed',
                     state: 'new Collection'
                 }} className={classes.linkButton}>
-                    <ListItem button style={{ textAlign: 'right' }} >
-                        <ListItemText primary={'New Collection'} onClick={handleSideBar} />
+                    <ListItem button style={{ textAlign: 'right' }} onClick={handleSideBar} >
+                        <ListItemText primary={'New Collection'} />
                     </ListItem>
                 </Link>
 

@@ -31,7 +31,19 @@ const Home = () => {
     }
     return (
         <div style={{ marginTop: '10rem', textAlign: 'center', padding: '5%' }}>
-            {/* <img src='https://cdn.webshopapp.com/shops/65545/files/295968303/500x300x1/sale.jpg' /> */}
+            <a href="mailto:'lidor110110@gmail.com'">lksnlksd</a>
+            <img src='https://www.101domain.com/images/flags/large/SALE.png' style={{
+                height: '10rem', width: '80%'
+            }} />
+
+            <div style={{ position: 'relative' }}>
+                <img src='https://cdn1.expertreviews.co.uk/sites/expertreviews/files/styles/er_main_wide/public/2019/08/best_online_clothes_shops.jpg?itok=M3soL5rF'
+                    style={{ height: '80%', width: '100%' }}
+                />
+                <Link to={{ pathname: '/feed', state: 'new Collection' }}>
+                    <div style={{ border: 'solid black 1px', padding: '0.5rem 1rem', backgroundColor: 'white', position: 'absolute', top: '50%', right: '45%' }} >new collection</div>
+                </Link>
+            </div>
             <header><h1 style={{ padding: '3rem' }}>Looks We Love</h1></header>
             <Grid container spacing={10}>
                 {buyTheLook.map(item => {

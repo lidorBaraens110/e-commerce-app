@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PopUp from 'reactjs-popup';
 function About() {
     return (
         <div style={{ textAlign: 'center', padding: '10% 20% 10% 20%', lineHeight: '1.5' }}>

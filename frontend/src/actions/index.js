@@ -3,6 +3,13 @@ export const newCollection = () => {
         type: 'NEW_COLLECTION'
     }
 }
+export const searchAction = (value) => {
+
+    return {
+        type: 'SEARCH',
+        payload: value
+    }
+}
 
 export const initial = (items) => {
     return {
@@ -17,20 +24,20 @@ export const sortState = (sortValue) => {
         payload: sortValue
     }
 }
-export const addToCart = (item) => {
+export const addToCart = ({ item, itemId }) => {
     return {
         type: 'ADD_TO_CART',
-        payload: item
+        payload: { item, itemId }
     }
 
 }
 
 
-export const editItem = (item) => {
+export const editItem = ({ item, value }) => {
     console.log('ACTION:edit')
     return {
         type: 'EDIT_ITEM',
-        payload: item
+        payload: { item, value }
     }
 }
 
@@ -41,17 +48,17 @@ export const removeFromCart = (item) => {
         payload: item
     }
 }
-export const addToWishList = (item) => {
+export const addToWishList = (id) => {
     return {
         type: 'ADD_TO_WISHLIST',
-        payload: item
+        payload: id
     }
 }
 
-export const removeFromWishList = (item) => {
+export const removeFromWishList = (id) => {
     return {
         type: 'REMOVE_FROM_WISHLIST',
-        payload: item
+        payload: id
     }
 }
 
@@ -74,6 +81,37 @@ export const editDetail = ({ name, value }) => {
     return {
         type: 'EDIT_DETAIL',
         payload: { name, value }
+    }
+}
+export const initItem = (item) => {
+    return {
+        type: 'INIT_ITEM',
+        payload: item
+    }
+}
+export const handleSize = (value) => {
+    return {
+        type: 'HANDLE_SIZE',
+        payload: value
+    }
+}
+export const sizeAlert = (flag) => {
+    return {
+        type: 'SIZE_ALERT',
+        payload: flag
+    }
+}
+export const compareSizeAlert = (flag) => {
+    return {
+        type: 'SIZE_COMPARE_ALERT',
+        payload: flag
+    }
+}
+export const pickSize = (size) => {
+    console.log('pick size: ' + size)
+    return {
+        type: 'SIZE',
+        payload: size
     }
 }
 

@@ -6,13 +6,13 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import { Link } from 'react-router-dom';
 import TheDrawer from '../sideComponent/theDrawer';
 import logo from '../sideComponent/logo.png';
-
-
+import PopUp from 'reactjs-popup';
 const Heading = (prop) => {
 
     const [sideBar, setSideBar] = useState(false);
     const handleSideBar = () => {
         setSideBar(preValue => !preValue);
+
     }
     return (
         <div>

@@ -21,7 +21,6 @@ const UserDetail = () => {
     const handleChange = (event) => {
 
         const { id, value } = event.target;
-        console.log(value, id)
         let name = id;
         dispatch(editDetail({ value, name }))
     }
@@ -76,7 +75,7 @@ const UserDetail = () => {
             </ListItem>
             <ListItem>
                 <Link to="/creditcard">
-                    <Button style={{ backgroundColor: 'black', color: 'white', borderRadius: '0', border: 'solid #ffecda 2px' }}> המשך לתשלום </Button>
+                    <Button onClick={() => console.log(userDetail)} style={{ backgroundColor: 'black', color: 'white', borderRadius: '0', border: 'solid #ffecda 2px' }}> המשך לתשלום </Button>
                 </Link>
             </ListItem>
         </List>

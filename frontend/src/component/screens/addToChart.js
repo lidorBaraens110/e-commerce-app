@@ -6,8 +6,8 @@ import PictureSwipe from '../sideComponent/pictureSwipe';
 import BuyTheLook from '../sideComponent/buyTheLook';
 import ButtonSize from '../sideComponent/buttonSize';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory } from 'react-router-dom';
-import { addToCart, removeFromWishList } from '../../actions/index';
+import { useHistory } from 'react-router-dom';
+import { addToCart, handleSize, removeFromWishList, sizeAlert, pickSize, compareSizeAlert } from '../../actions';
 
 const useStyle = makeStyles(theme => ({
     container: { padding: '3% ', textAlign: 'center', marginTop: '5rem' },
@@ -20,82 +20,75 @@ const AddToChart = (props) => {
     const dispatch = useDispatch();
     const classes = useStyle();
     const history = useHistory();
-    const [variant, setVariant] = useState({
-        cart: 'outlined',
-        buyNow: 'contained'
-    })
 
-    useEffect(() => {
-        console.log(props)
-    }, [])
-    const [item, setItem] = useState(props.location.state);
-    const [leftSize, setLeftSize] = useState(1);
-    const [counter, setCounter] = useState(0);
-    const [alertt, setAlert] = useState('false');
-    const [sizeSelect, setSizeSelect] = useState(false)
-    const [sizeAlert, setSizeAlert] = useState(false);
-    useEffect(() => {
-        setItem(preValue => {
-            return { ...preValue, countSelected: counter }
-        })
-    }, [counter])
-
-    const handleAddSize = () => {
-        if (leftSize === counter) {
-            setAlert('true')
-            setTimeout(() => {
-                setAlert('false')
-            }, 2000);
-        } else if (leftSize > counter) {
-            setCounter(preValue => {
-                return preValue + 1
-            })
+    const item = useSelector(state => state.item)
+    const [theCart, setTheCart] = useState(false)
+    const [buttonSelect, setButtonSelect] = useState(item.sizes.map(size => {
+        if (size.name !== 's') {
+            return { ...size, a: false }
         }
+        else {
+            return {
+                ...size,
+                a: true
+            }
+        }
+    }))
 
+    const handleCounterSize = (value) => {
+        console.log('value: ' + value + ' count: ' + item.countSelected + ' sizeSelected: ' + item.sizeSelected.left)
+        if (value < 0 && item.countSelected > 1) {
+            dispatch(handleSize(value))
+        }
+        else {
+            if (value > 0) {
+                if (item.sizeSelected.left == item.countSelected) {
+                    dispatch(compareSizeAlert(true))
+                    setTimeout(() => {
+                        dispatch(compareSizeAlert(false))
+                    }, 2000)
+                } else {
+                    dispatch(handleSize(value))
+                }
+            }
+        }
     }
 
-    const handleRemoveSize = () => {
-        setCounter(preValue => preValue > 1 ? preValue - 1 : 1)
-        setItem(preValue => {
-            return { ...preValue, countSelect: counter }
+    const handleButtonSelect = sizeSelected => {
+        console.log('button select')
+        setButtonSelect(preValue => {
+            return preValue.map(size => {
+                if (size.name !== sizeSelected.name) {
+                    return {
+                        ...size,
+                        a: false
+                    }
+                }
+                else {
+                    return {
+                        ...size,
+                        a: true
+                    }
+                }
+            })
         })
+        dispatch(pickSize(sizeSelected))
     }
-
-    const handleButton = (name) => {
-
-        const { s, m, l, xl } = item;
-        const array = [s, m, l, xl];
-        const currentSize = array.filter(size => size.name === name);
-        const otherSize = array.filter(size => size.name !== name);
-        currentSize[0].a = 'true'
-        otherSize.map(size => {
-            return size.a = 'false'
-        })
-        setItem(preValue => {
-            return { ...preValue, sizeSelected: currentSize[0] }
-        });
-        setLeftSize(currentSize[0].left)
-        setCounter(1)
-        setSizeSelect(true)
-    }
-    const handleSizeNotSelected = () => {
-        setSizeAlert(true)
-        setTimeout(() => {
-            setSizeAlert(false)
-        }, 2000);
-    }
-
-
     const handleAddToCart = () => {
-        dispatch(addToCart(item));
+        console.log('addToCart')
+        let itemId = item._id + item.sizeSelected.name
+        dispatch(addToCart({ item, itemId }));
         dispatch(removeFromWishList(item.id))
+        setTheCart(true)
     }
 
     const handleGoToBuy = () => {
-        dispatch(addToCart(item))
+        let itemId = item._id + item.sizeSelected.name
+        dispatch(addToCart({ item, itemId }));
         history.push("/cashregister")
     }
 
+    const handleUpdateUser = () => alert('נעדכן אותך חביבי')
 
     return (
         <div style={{ textAlign: 'center' }}>
@@ -133,35 +126,69 @@ const AddToChart = (props) => {
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'row', margin: '1rem 0' }}>
-                            <ButtonSize selected={item.s.a} children='s' onClick={() => handleButton('s')} className={classes.sizeButton} />
-                            <ButtonSize selected={item.m.a} children='m' onClick={() => handleButton('m')} className={classes.sizeButton} />
-                            <ButtonSize selected={item.l.a} children='l' onClick={() => handleButton('l')} className={classes.sizeButton} />
-                            <ButtonSize selected={item.xl.a} children='xl' onClick={() => handleButton('xl')} className={classes.sizeButton} />
+
+                            {buttonSelect.map(size => {
+                                return <ButtonSize
+                                    key={size.name}
+                                    selected={size.a}
+                                    children={size.name}
+                                    onClick={() => handleButtonSelect(size)}
+                                    className={classes.sizeButton} />
+                            })}
                         </div>
+                        {item.sizeSelected.left === 0 ?
+                            <div style={{ margin: '22% 0 10% 0' }}>
+                                <Button color='default'
+                                    variant='outlined' fullWidth
+                                    style={{ borderRadius: '0', borderColor: 'black' }}
+                                >
+                                    אזל המלאי
+                        </Button>
+                                <Button onClick={handleUpdateUser} color='default' variant='contained' fullWidth style={{ marginTop: '5%', borderRadius: '0', color: 'white', backgroundColor: 'black' }}>
+                                    עדכנו אותי שיחזור
+                        </Button>
+                            </div>
+                            :
+                            <div>
+                                <div style={{ fontSize: '1.3rem', width: '5rem', display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', border: 'gray solid 1px' }}>
 
-                        {leftSize === 0 ? <p>מצטערים לא נשאר מהמידה הזאת</p> :
-                            <div style={{ fontSize: '1.3rem', width: '5rem', display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', border: 'gray solid 1px' }}>
+                                    <AddIcon onClick={() => handleCounterSize(1)} />
+                                    <p>{item.countSelected}</p>
+                                    <RemoveIcon onClick={() => handleCounterSize(-1)} />
+                                </div>
 
-                                <AddIcon onClick={handleAddSize} />
-                                <p>{counter}</p>
-                                <RemoveIcon onClick={handleRemoveSize} />
+                                <div style={{ margin: '10% 0 10% 0' }}>
+
+                                    {item.compareSizeAlert &&
+                                        <p style={{ margin: '2rem 0 2rem 0' }}>
+                                            נשארו רק {item.sizeSelected.left} מפריט זה
+                                        </p>
+                                    }
+                                    {theCart &&
+                                        <Button color='default'
+                                            variant='outlined' fullWidth
+                                            style={{ borderRadius: '0', borderColor: 'black', marginBottom: '5%' }}
+
+                                        >הפריט נוסף לעגלה</Button>}
+
+                                    <Button color='default'
+                                        variant='outlined' fullWidth
+                                        style={{ borderRadius: '0', borderColor: 'black' }}
+                                        onClick={handleAddToCart}
+                                    >
+                                        הוספה לסל
+                        </Button>
+                                    <Button onClick={handleGoToBuy}
+                                        color='default' variant='contained' fullWidth
+                                        style={{ marginTop: '5%', borderRadius: '0', color: 'white', backgroundColor: 'black' }}>
+                                        לקופה
+                        </Button>
+                                </div>
                             </div>
                         }
-                        {sizeAlert && <p>לא נבחרה מידה</p>}
-                        <div style={{ margin: '10% 0 10% 0' }}>
-                            <Button color='default'
-                                variant={variant.cart} fullWidth={true}
-                                style={{ borderRadius: '0', borderColor: 'black' }}
-                                onClick={sizeSelect ? handleAddToCart : handleSizeNotSelected}
-                            >
-                                הוספה לסל
-                        </Button>
-                            <Button onClick={handleGoToBuy} color='default' variant={variant.buyNow} fullWidth style={{ marginTop: '5%', borderRadius: '0', color: 'white', backgroundColor: 'black' }}>
-                                לקופה
-                        </Button>
-                        </div>
-                        {alertt === 'true' && <p style={{ marginTop: '2rem' }}>נשארו רק {leftSize} מפריט זה</p>}
+
                         <p>{item.description}</p>
+                        <Button onClick={() => console.log(item.sizeSelected)}>בדיקה</Button>
                     </Card>
                 </Grid>
             </Grid>

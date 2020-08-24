@@ -4,7 +4,7 @@ import { Button } from '@material-ui/core';
 const ButtonSize = ({ onClick, className, children, selected }) => {
     return (
         <Button variant='outlined'
-            style={{ marginLeft: '1rem', borderColor: selected === 'true' && 'blue' }}
+            style={{ marginLeft: '1rem', borderColor: selected && 'blue' }}
             key={children}
             onClick={onClick}
             className={className}>
