@@ -2,6 +2,8 @@
 const Order = require("./models/order");
 const CodeCoupon = require("./models/CodeCoupon");
 const Item = require("./models/item");
+const types = ['מכנסיים קצרות', "מכנסיים ארוכות", "חצאיות", "ג'ינסים", "טייצים", "שמלות", "חולצות"]
+
 
 const getAllItems = async (req, res) => {
     let items;
@@ -60,16 +62,13 @@ const addItem = async (req, res) => {
 }
 
 const getItemById = async (req, res) => {
-    console.log('getItemById')
     const existItem = await Item.findById(req.params.id);
-    console.log(existItem)
     return res.json(existItem)
 }
 
 const updateItem = async (req, res) => {
     const { id, item } = req.body
     console.log(item, id)
-    // let newItem;
     try {
         await Item.findOneAndUpdate({ _id: id }, item, { new: true })
     } catch (error) {
@@ -77,154 +76,93 @@ const updateItem = async (req, res) => {
             message: "The Server is busy, please try again later \n" + error,
         });
     }
-
 }
 
 const buyItems = async (req, res) => {
-    const { items, userDetail } = req.body
-    console.log('items', items);
-
-    const succeedItems = []
+    const { items, userDetail } = req.body;
     const errItemsArray = [];
-    // const succeedItems = [];
-    if (items.length == 0) {
-        res.status(201).json({
+
+    if (items.length === 0) {
+        return res.status(201).json({
             message: "there is no items in the cart",
         });
     }
 
-    async function itemsState() {
-        await items.forEach(async (item, i) => {
-            try {
-                console.log('dsf;ksd')
-                let currentItem = await Item.findOneAndUpdate(
-                    { _id: item.id, [`oneSize.colors.${item.currentColor}.quantity`]: { $gte: item.quantity } },
-                    {
-                        $inc: { [`oneSize.colors.${item.currentColor}.quantity`]: -item.quantity }
-                    }, { new: true }
-                )
-                console.log('currentItem', currentItem);
-                if (!currentItem) {
-                    console.log(1.7)
-                    errItemsArray.push(item)
-                } else {
-                    console.log(1.7)
-                    succeedItems.push(item);
-                }
-            }
-            catch (err) {
-                console.log(err)
-            }
-        })
-    }
-
-    function checkIfNeedUpdate() {
-        console.log(3);
-        console.log('succeedItems:', succeedItems)
-        if (errItemsArray.length > 0) {
-            succeedItems.forEach(async (item, i) => {
-                await Item.findOneAndUpdate(
-                    { _id: item.id, },
-                    {
-                        $inc: { [`oneSize.colors.${item.currentColor}.quantity`]: item.quantity }
-                    }, { new: true }
-                )
+    await Promise.all(items.map(async (item, i) => {
+        console.log('new --------------------------------------------------------------------')
+        try {
+            let [currentItem] = await Item.find({
+                _id: item.id,
+                // [`oneSize.colors.${item.currentColor}.quantity`]: { $gte: item.quantity }
             })
-            res.status(201).json({
+            let currentColorQ = currentItem.oneSize.colors[item.currentColor].quantity
+            const isQuantityAvailable = currentColorQ >= item.quantity
+            if (!isQuantityAvailable) {
+                errItemsArray.push({ ...item, totalQuantity: currentColorQ })
+            }
+        }
+        catch (err) {
+            console.log('err item couldnt upload --->>>>' + err)
+        }
+    })).then(() => {
+        if (errItemsArray.length > 0) {
+            return res.status(201).json({
                 message: "not all the cart is available",
                 items: errItemsArray
             });
         } else {
-            res.status(201).json({
-                message: "the items in the shop updated",
-                items: errItemsArray
-            });
+            items.forEach(async (item, i) => {
+                try {
+                    await Item.findOneAndUpdate(
+                        { _id: item.id, },
+                        {
+                            $inc: { [`oneSize.colors.${item.currentColor}.quantity`]: -item.quantity }
+                        }
+                    )
+                }
+                catch (err) {
+                    console.log('err updateItems', err)
+                }
+            })
         }
-    }
-
-    await itemsState()
-    checkIfNeedUpdate()
-    // const newPromise = new Promise((res, rej) => {
-    //     if (items.length === 0) rej();
-    //     itemsState(); res();
-    // })
-    // const asyncTestFunction = async () => {
-    //     await newPromise
-    //     checkIfNeedUpdate()
-    // }
-    // asyncTestFunction()
-    // console.log(10)
-    // itemsState();
-    // console.log(20)
-
-    // console.log(30)
-
-    // var bar = new Promise((resolve, reject) => {
-    //     if (items.length === 0) reject();
-    //     items.forEach(async (item, i) => {
-    //         let currentItem = await Item.findOneAndUpdate(
-    //             { _id: item.id, [`oneSize.colors.${item.currentColor}.quantity`]: { $gte: item.quantity } },
-    //             {
-    //                 $inc: { [`oneSize.colors.${item.currentColor}.quantity`]: -item.quantity }
-    //             }, { new: true }
-    //         )
-    //         if (!currentItem) {
-    //             await Item.find({ _id: item.id }).exec((err, doc) => {
-    //                 if (err) {
-    //                     if (i === items.length - 1) resolve();
-    //                     console.log(err + 'item not found')
-    //                 } else {
-    //                     errItemsArray.push({
-    //                         id: doc[0]._id, currentColor: item.currentColor
-    //                         , quantity: doc[0].oneSize.colors[item.currentColor].quantity
-    //                     })
-    //                     if (i === items.length - 1) resolve();
-    //                 }
-    //             })
-
-    //         } else {
-    //             succeedItems.push(currentItem);
-    //             if (i === items.length - 1) resolve();
-    //         }
-    //     })
-    // })
-
-    // bar.then(async () => {
-
-    //     if (errItemsArray.length > 0) {
-    //         succeedItems.forEach(async (item, i) => {
-    //             await Item.findOneAndUpdate(
-    //                 { _id: item.id, },
-    //                 {
-    //                     $inc: { [`oneSize.colors.${item.currentColor}.quantity`]: item.quantity }
-    //                 }, { new: true }
-    //             )
-    //             if (i === succeedItems.length - 1) {
-    //                 return res.json({ message: 'אלו הם הפריטים שחסר מהכמות שלהם במלאי', errItemsArray })
-    //             }
-    //         })
-    //     } else {
-    //         return res.json('עבר בהצלחה')
-    //     }
-    // })
-    //     .catch(err => {
-    //         console.log(err)
-    //         return res.json({ messageErr: 'אין פריטים במלאי', err })
-    //     })
+    }).then(() => {
+        return res.status(201).json({
+            message: "cart update",
+            items: []
+        });
+    }).catch(err => console.log('err last---<<', err))
 }
 
 
 const cancelDeal = async (req, res) => {
     const { items } = req.body
     console.log('cancelDeal')
-    // items.forEach(async (item, i) => {
-    //     await Item.findOneAndUpdate(
-    //         { _id: item.id, },
-    //         {
-    //             $inc: { [`oneSize.colors.${item.currentColor}.quantity`]: item.quantity }
-    //         }, { new: true }
-    //     )
-    // })
+    console.log(items)
+    items.forEach(async (item, i) => {
+        await Item.findOneAndUpdate(
+            { _id: item.id, },
+            {
+                $inc: { [`oneSize.colors.${item.currentColor}.quantity`]: item.quantity }
+            }, { new: true }
+        )
+    })
+}
+
+const getSortedItems = async (req, res) => {
+    const itemsPerPage = req.body.itemsPerPage
+    const page = req.body.page
+    let items = []
+    if (req.body.type === 'new Collection') {
+        items = await Item.find({ newCollection: true }).sort({ [req.body.sortedBy]: 1 })
+    } else if (types.includes(req.body.type)) {
+        items = await Item.find({ type: req.body.type }).sort({ [req.body.sortedBy]: 1 })
+    } else {
+        items = await Item.find({ name: { $regex: req.body.type } }).sort({ [req.body.sortedBy]: 1 })
+    }
+    const filteredItems = items.filter((x, i) => {
+        return i >= (page - 1) * itemsPerPage && i < page * itemsPerPage
+    })
+    return res.json({ items: filteredItems, totalPage: Math.ceil(items.length / itemsPerPage) })
 }
 
 const removeItem = async (req, res) => {
@@ -253,23 +191,23 @@ const getAllCoupons = async (req, res) => {
 
 }
 
-const getItemsByType = async (req, res) => {
 
-    const items = await Item.find({ type: req.params.type })
-    if (!items) {
-        return res.json({ message: "items with this type didn't find" })
-    }
-    return res.json(items)
-}
+// const getItemsByType = async (req, res) => {
+//     const items = await Item.find({ type: req.params.type })
+//     if (!items) {
+//         return res.json({ message: "items with this type didn't find" })
+//     }
+//     return res.json(items)
+// }
 
-const getNewCollectionItems = async (req, res) => {
+// const getNewCollectionItems = async (req, res) => {
 
-    const items = await Item.find({ newCollection: true })
-    if (!items) {
-        return res.json({ message: "new collection items didn't find" })
-    }
-    return res.json(items)
-}
+//     const items = await Item.find({ newCollection: true })
+//     if (!items) {
+//         return res.json({ message: "new collection items didn't find" })
+//     }
+//     return res.json(items)
+// }
 
 const getRecommendedItems = async (req, res) => {
     const items = await Item.find({ recommended: true })
@@ -298,6 +236,11 @@ const getManyByIds = async (req, res) => {
     // return res.json({ wishList })
 }
 
+// const getItemsByName = async (req, res) => {
+//     const items = await Item.find({ name: { $regex: req.params.name } })
+//     return res.json(items)
+// }
+
 exports.addItem = addItem;
 exports.getAllItems = getAllItems;
 exports.getItemById = getItemById;
@@ -311,8 +254,10 @@ exports.getAllOrders = getAllOrders;
 exports.createCodeCoupon = createCodeCoupon;
 exports.getAllCoupons = getAllCoupons;
 exports.buyItems = buyItems
-exports.getItemsByType = getItemsByType
-exports.getNewCollectionItems = getNewCollectionItems;
+// exports.getItemsByType = getItemsByType
+// exports.getNewCollectionItems = getNewCollectionItems;
 exports.getRecommendedItems = getRecommendedItems;
 exports.getManyByIds = getManyByIds;
 exports.cancelDeal = cancelDeal;
+// exports.getItemsByName = getItemsByName;
+exports.getSortedItems = getSortedItems

@@ -16,10 +16,6 @@ const itemScheme = new Scheme({
         type: String,
         required: true
     },
-    description: {
-        type: String,
-        required: true
-    },
     price: {
         type: Number,
         required: true

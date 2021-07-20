@@ -19,7 +19,9 @@ const {
     getNewCollectionItems,
     getRecommendedItems,
     getManyByIds,
-    cancelDeal
+    cancelDeal,
+    getItemsByName,
+    getSortedItems
 } = require("./controller");
 
 
@@ -30,9 +32,10 @@ router.get('/getItemById/:id', getItemById);
 router.get('/getAllOrders', getAllOrders);
 router.get('/getOrderById/:id', getOrderById);
 router.get('/getAllCoupon/', getAllCoupons);
-router.get('/getItemsByType/:type', getItemsByType);
-router.get('/getNewCollectionItems', getNewCollectionItems);
+// router.get('/getItemsByType/:type', getItemsByType);
+// router.get('/getNewCollectionItems', getNewCollectionItems);
 router.get('/getRecommendedItems', getRecommendedItems);
+// router.get('/getItemsByName/:name', getItemsByName);
 
 //post
 router.post("/addItem", addItem);
@@ -44,6 +47,7 @@ router.post('/removeOrder', removeOrder);
 router.post('/createCodeCoupon', createCodeCoupon);
 router.post('/buyItems', buyItems)
 router.post('/getManyByIds', getManyByIds)
-router.post('/cancelDeal', cancelDeal)
+router.post('/cancelDeal', cancelDeal);
+router.post('/getSortedItems', getSortedItems)
 
 module.exports = router;
