@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import { useHistory } from 'react-router-dom';
-import MenuDrawer from '../drawer/MenuDrawer';
-import { FaShoppingCart } from 'react-icons/all'
-import { Button, Grid, Typography } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-import CartDrawer from '../drawer/CartDrawer';
+import { useHistory, useLocation } from 'react-router-dom';
+
+import { Button, Grid, IconButton, Typography, useMediaQuery } from '@material-ui/core';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
 import { toggle } from '../../redux/actions';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { useTheme } from '@material-ui/core/styles';
+import { FaShoppingCart } from 'react-icons/all'
+import SearchIcon from '@material-ui/icons/Search';
+import MenuIcon from '@material-ui/icons/Menu';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import MenuDrawer from '../drawer/MenuDrawer';
+import CartDrawer from '../drawer/CartDrawer';
 
 
 const types = ['מכנסיים קצרות', "מכנסיים ארוכות", "חצאיות", "ג'ינסים", "טייצים", "שמלות", "חולצות"]
@@ -113,11 +112,24 @@ const useStyle = makeStyles(theme => ({
         [theme.breakpoints.down('xs')]: {
             fontSize: '1rem'
         }
+    },
+    input: {
+        border: '1px solid black',
+        padding: '0.5rem',
+        backgroundColor: 'white',
+        outline: 'none',
+        '&:focus': {
+            borderRadius: '0',
+        }
+    },
+    form: {
+        display: 'flex', alignItems: 'center', justifyContent: 'flex-end'
     }
 }))
 
 const Heading = (prop) => {
 
+    const location = useLocation();
     const dispatch = useDispatch()
     const classes = useStyle();
     const theme = useTheme()
@@ -129,6 +141,7 @@ const Heading = (prop) => {
     const wishListLength = useSelector(state => state.wishList.length)
     const [y, setY] = useState(0)
     const [sideBar, setSideBar] = useState(false);
+    const [inputSearch, setInputSearch] = useState('')
 
     const styles = useSpring({
         transform: !headingState &&
@@ -137,12 +150,9 @@ const Heading = (prop) => {
     })
 
 
-
     const handleNavigation = (param) => {
         history.push('/' + param)
     };
-
-
 
     const handleSideBar = () => {
         setSideBar(preValue => !preValue);
@@ -150,6 +160,7 @@ const Heading = (prop) => {
     const handleNavigationItems = (type) => {
         history.push('/items/' + type)
     }
+
 
     const handleScroll = useCallback(
         e => {
@@ -174,6 +185,14 @@ const Heading = (prop) => {
     }, [handleScroll])
 
 
+    const goToSearchPage = (e) => {
+        e.preventDefault()
+        history.push(`/items/${inputSearch}`)
+    }
+    const handleInput = (e) => {
+        setInputSearch(e.target.value)
+    }
+
     return (
         <>
             <MenuDrawer handleSideBar={handleSideBar} open={sideBar} onClose={handleSideBar} />
@@ -184,9 +203,7 @@ const Heading = (prop) => {
                 <div className={classes.midHeader}>
                     {mobileView ?
                         <div style={{ flex: 1, display: 'flex', textAlign: 'right', alignItems: 'center' }}>
-
                             <MenuIcon fontSize='small' className={classes.cursor} onClick={() => setSideBar(true)} />
-
                         </div> : <div style={{ flex: 1 }} />
                     }
 
@@ -222,9 +239,10 @@ const Heading = (prop) => {
                                     </Typography>
                                 </div>
                             }
-                            <FaShoppingCart className={classes.cursor}
+                            <FaShoppingCart
+                                className={classes.cursor}
                                 fontSize={mobileView ? 'small' : 'default'}
-                                onClick={() => mobileView ? handleNavigation('cart') : dispatch(toggle())} />
+                                onClick={() => mobileView ? handleNavigation('cart') : location.pathname !== '/creditCard' ? dispatch(toggle()) : alert('לא ניתן לשנות את פרטי העגלה בזמן הרכישה')} />
                         </div>
                     </div>
                 </div>
@@ -237,30 +255,17 @@ const Heading = (prop) => {
 
                     </div>
 
-                    <div >
-                        <Grid container
-                            spacing={0}
-                            alignItems="flex-end"
-                            style={{ padding: '0.5rem 0' }}
-                        >
-                            <Grid
-                                item
-                                style={{ display: 'flex', alignItems: 'center' }}
-                            >
-                                <input
-                                    placeholder='חיפוש'
-                                    style={{
-                                        border: '1px solid black',
-                                        padding: '0.5rem',
-                                        backgroundColor: 'white'
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <SearchIcon />
-                            </Grid>
-                        </Grid>
-                    </div>
+                    <form onSubmit={goToSearchPage} className={classes.form}>
+                        <input
+                            className={classes.input}
+                            placeholder='חיפוש'
+                            value={inputSearch}
+                            onChange={handleInput}
+                        />
+                        <IconButton type='submit' style={{ margin: '0', padding: '0.3rem', borderRadius: 0, backgroundColor: 'black' }}>
+                            <SearchIcon style={{ color: 'white' }} />
+                        </IconButton>
+                    </form>
                 </div>
                 }
             </animated.header>

@@ -56,11 +56,11 @@ function CartDrawer({ open }) {
             anchor="right"
             open={open} >
             <div >
-                <UpdateItemModal
+                {modalState && <UpdateItemModal
                     itemId={itemToUpdate.id}
                     lastColor={itemToUpdate.currentColor}
                     modalState={modalState}
-                    handleClose={handleModal} />
+                    handleClose={handleModal} />}
                 <Typography className={classes.header}>סל הקניות</Typography>
                 {cart.length === 0 ?
                     <Typography className={classes.emptyItems} >רשימת קניות ריקה</Typography> :

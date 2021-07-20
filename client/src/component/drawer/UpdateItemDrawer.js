@@ -29,11 +29,12 @@ function UpdateItemDrawer({ itemId, lastColor, open, handleDrawerClose }) {
                 console.log(err)
             }
         }
-        fetchItem()
+        if (itemId) {
+            fetchItem()
+        }
     }, [itemId])
 
     const handleUpdateCart = (currentColor) => {
-
         dispatch(updateItem({
             item: {
                 id: item._id,

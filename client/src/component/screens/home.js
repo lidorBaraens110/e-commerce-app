@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ItemsList from '../common/itemsList';
 import axios from 'axios';
 
+
 const Home = () => {
 
     const dispatch = useDispatch();
@@ -32,7 +33,7 @@ const Home = () => {
         <div style={{ textAlign: 'center', padding: '3rem 5rem' }}>
             <img style={{ width: '100%', height: 'auto' }} src='https://images1.ynet.co.il/PicServer5/2017/07/23/7925736/hibur6.jpg' />
             {load && <ItemsList items={itemsList} loading={!load} handleClick={handleClick} wishList={wishList} />}
-        </div >
+        </div>
 
     )
 }

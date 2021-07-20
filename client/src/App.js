@@ -26,12 +26,33 @@ import CashRegister from './component/screens/cashRegister';
 import WishList from './component/screens/wishList';
 import ItemPage from './component/screens/ItemPage';
 import CreditCard from './component/screens/creditCard';
+import SuccessPage from './component/screens/SuccessPage';
+import { makeStyles } from '@material-ui/core';
+
+const useStyle = makeStyles(theme => ({
+  '@global': {
+    '*::-webkit-scrollbar': {
+      [theme.breakpoints.down('sm')]: {
+        width: 0
+      },
+      width: '0.3rem',
+    },
+    '*::-webkit-scrollbar-track': {
+      '-webkit-box-shadow': ' 0 0 3px rgba(0,0,0,0.00)',
+    },
+    '*::-webkit-scrollbar-thumb': {
+      backgroundColor: 'rgba(0,0,0,.1)',
+      // outline: '1px solid slategrey',
+    },
+  },
+}))
 // import Cart from './component/screens/cart';
 
 // Configure JSS
 const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
 
 function App() {
+  const classes = useStyle();
 
   // const store = createStore(reducers, initialState, composeWithDevTools(applyMiddleware(thunk)))
 
@@ -53,6 +74,7 @@ function App() {
                 <Route path="/cashRegister" exact component={CashRegister} />
                 <Route path="/creditCard" exact component={CreditCard} />
                 <Route path="/items/:id" exact component={Feed} />
+                <Route path='/successPage' exact component={SuccessPage} />
               </Switch>
               <Footer />
             </Router>

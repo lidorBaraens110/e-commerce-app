@@ -1,12 +1,15 @@
-import { IS_PURCHASE_DONE } from '../type';
+import { INITIAL_PURCHASE, PURCHASE_COMPLETE } from '../type';
 
-const initialState = false
+const initialState = false;
 
 const isPurchaseDone = (state = initialState, { type, payload }) => {
     switch (type) {
-        case IS_PURCHASE_DONE:
+        case PURCHASE_COMPLETE:
             return true
-        default: return state
+        case INITIAL_PURCHASE:
+            return false
+        default:
+            return state
     }
 }
 

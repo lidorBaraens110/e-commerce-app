@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     ListContainer: {
         maxWidth: '100vw',
         minHeight: '75vh'
@@ -67,8 +67,15 @@ const useStyles = makeStyles({
     lastGrid: {
         display: 'flex', alignItems: 'flex-end', flexDirection: 'column', marginBottom: '0.2rem'
     },
-    price: { fontSize: '0.8rem', flex: 1 }
+    price: { fontSize: '0.8rem', flex: 1 },
+    alertTypography: {
+        color: 'red',
+        flex: 1,
+        [theme.breakpoints.down('xs')]: {
+            fontSize: '0.8rem'
+        }
+    }
 
-})
+}))
 
 export default useStyles

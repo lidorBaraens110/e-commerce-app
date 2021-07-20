@@ -9,23 +9,27 @@ import { initial } from '../redux/action';
 
 
 const AddItem = () => {
+
     const dispatch = useDispatch()
     const [init, setInit] = useState(true);
     const item = useSelector(state => state.item)
     const handleInit = () => {
         setInit(pre => !pre)
     }
+
     useEffect(() => {
         return () => {
             dispatch(initial());
         }
     }, [])
+
     const handleUploadItem = (e) => {
         e.preventDefault()
         uploadItem();
         handleInit();
 
     }
+
     const uploadItem = async () => {
         try {
             await axios.post('http://localhost:5000/api/addItem', { item })

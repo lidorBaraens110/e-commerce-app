@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { makeStyles, Container, useTheme, useMediaQuery, CircularProgress } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { addToCart, toggle } from '../../redux/actions';
 import CommonItem from '../common/CommonItem/commonItem';
@@ -32,14 +32,26 @@ function ItemPage() {
     const dispatch = useDispatch()
     const [loaded, setLoaded] = useState(false)
     const [item, setItem] = useState();
+    const wishList = useSelector(state => state.wishList);
+
 
     useEffect(() => {
         setLoaded(false)
+        console.log(wishList.includes(id))
         async function fetchItem() {
-            await axios.get(`${backEnd}/api/getItemById/${id}`).then((res) => {
-                setItem(res.data);
+            try {
+                const { data } = await axios.get(`${backEnd}/api/getItemById/${id}`);
+                if (wishList.includes(id)) {
+                    setItem({ ...data, wishList: true });
+                } else {
+                    setItem({ ...data, wishList: false });
+                }
+
                 setLoaded(true)
-            }).catch(err => console.log(err))
+            } catch (err) {
+                console.log(err)
+            }
+
         }
         fetchItem()
     }, [id])

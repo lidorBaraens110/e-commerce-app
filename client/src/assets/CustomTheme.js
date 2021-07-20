@@ -8,7 +8,6 @@ const defaultTheme = createMuiTheme({
         fontWeightRegular: 600,
     },
 
-
 });
 
 

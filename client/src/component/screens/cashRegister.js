@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import UserDetail from '../common/userDetail';
 import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { useTheme, useMediaQuery, CircularProgress, Typography, Grid } from '@material-ui/core';
-import { handleQuantity, removeFromCart } from '../../redux/actions';
+import { useTheme, useMediaQuery, Button, Typography, Grid, Dialog, DialogTitle, DialogContent } from '@material-ui/core';
+import { handleQuantity, removeFromCart, updateAlertCart, removeAlertFromCart, activatePurchase } from '../../redux/actions';
 import CartList from '../common/CartList/cartList';
 import UpdateItemDrawer from '../drawer/UpdateItemDrawer';
 import UpdateItemModal from '../../modal/updateItemModal';
+import axios from 'axios';
+
 
 const useStyles = makeStyles((theme) => ({
     container: {
         margin: '0', maxWidth: '100%'
     },
     cartGrid: {
-        backgroundColor: '#d3d3d3'
+        backgroundColor: '#E5E4E2'
     },
     emptyCart: {
         textAlign: 'center'
@@ -38,9 +40,11 @@ const useStyles = makeStyles((theme) => ({
 ))
 
 const CashRegister = () => {
+    const cartRef = useRef()
     const history = useHistory();
     const dispatch = useDispatch()
     const cart = useSelector(state => state.cart)
+    const userDetail = useSelector(state => state.userDetail)
     const classes = useStyles()
     const [itemToUpdate, setItemToUpdate] = useState({});
     const [total, setTotal] = useState()
@@ -48,6 +52,8 @@ const CashRegister = () => {
     const [drawerState, setDrawerState] = useState(false);
     const theme = useTheme();
     const mobileView = useMediaQuery(theme.breakpoints.down('xs'));
+    const [alertItems, setAlertItems] = useState(false);
+    const [notAvailableItems, setNotAvailableItems] = useState([]);
 
     const updateItem = (item) => {
         setItemToUpdate(item)
@@ -73,6 +79,12 @@ const CashRegister = () => {
         setTotal(totalPrice)
     }, [sum])
 
+    useEffect(() => {
+        return () => {
+            dispatch(removeAlertFromCart())
+        }
+    }, [])
+
     const handleNavigate = (param) => {
         history.push(`/add/${param}`)
     }
@@ -89,10 +101,39 @@ const CashRegister = () => {
         setDrawerState(false)
     }
 
+    const buyItems = (e) => {
+        console.log(cart)
+        e.preventDefault()
+        axios.post('http://localhost:5000/api/buyItems', { items: cart, userDetail })
+            .then((res) => {
+                if (res.data.items.length > 0) {
+                    dispatch(updateAlertCart(res.data.items))
+                    setAlertItems(true)
+                } else {
+                    history.push('/creditCard', cart);
+                }
+            })
+    };
+    const onCloseAlert = () => {
+        setAlertItems(false)
+    }
+    useEffect(() => {
+        return () => {
+            if (alertItems) {
+                cartRef.current.scrollIntoView({
+                    behavior: 'smooth',
+                    block: "nearest",
+                    inline: "start"
+                })
+            }
+        }
+    }, [alertItems])
+
     return (
         <>
-            <UpdateItemDrawer itemId={itemToUpdate.id} lastColor={itemToUpdate.currentColor} open={drawerState} handleDrawerClose={handleDrawerClose} />
-            <UpdateItemModal itemId={itemToUpdate.id} lastColor={itemToUpdate.currentColor} modalState={modalState} handleClose={handleModal} />
+            <AlertItems open={alertItems} onClose={onCloseAlert} />
+            {drawerState && <UpdateItemDrawer itemId={itemToUpdate.id} lastColor={itemToUpdate.currentColor} open={drawerState} handleDrawerClose={handleDrawerClose} />}
+            {modalState && <UpdateItemModal itemId={itemToUpdate.id} lastColor={itemToUpdate.currentColor} modalState={modalState} handleClose={handleModal} />}
             <Grid
                 container
                 spacing={mobileView ? 0 : 10}
@@ -102,15 +143,17 @@ const CashRegister = () => {
                     item
                     xs={12} s={7} m={7} lg={7} xl={7}
                 >
-                    <UserDetail />
+                    <UserDetail buyItems={buyItems} />
+                    {/* <Button onClick={() => console.log(cart)}>as;fnaslfs</Button> */}
                 </Grid>
                 <Grid item
-                    className={classes.cartGrid}
+                    className={!mobileView ? classes.cartGrid : classes.gridMobile}
                     xs={12} s={5} m={5} lg={5} xl={5}
                 >
                     {cart.length === 0 ?
-                        <Typography className={classes.emptyCart} > רשימת קניות ריקה</Typography> :
-                        <>
+                        <Typography className={classes.emptyCart} > רשימת קניות ריקה</Typography>
+                        :
+                        <div ref={cartRef}>
                             <CartList
                                 updateItem={updateItem}
                                 cart={cart}
@@ -119,12 +162,26 @@ const CashRegister = () => {
                                 sum={sum}
                                 removeFromCart={handleRemoveFromCart} />
                             <Typography className={classes.total}>סה"כ {total} &#8362;</Typography>
-
-                        </>
+                        </div>
                     }
                 </Grid>
+
             </Grid>
         </>
     )
 }
 export default CashRegister;
+
+
+const AlertItems = ({ open, onClose }) => {
+    // const [updateState, setUpdateState] = useState(false);
+    return (
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle style={{ color: 'red' }}> העגלה מכילה פריטים שאזלו, עדכן את העגלה על מנת להמשיך בקנייה  </DialogTitle>
+
+            <Button variant='contained' style={{ fontSize: '1.2rem' }} onClick={onClose}>
+                הבנתי
+            </Button>
+        </Dialog>
+    )
+}

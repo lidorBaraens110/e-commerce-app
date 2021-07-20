@@ -2,7 +2,10 @@ import {
     ADD_TO_CART, ADD_TO_WISHLIST,
     REMOVE_FROM_WISHLIST,
     HANDLE_QUANTITY, REMOVE_FROM_CART, TOGGLE_CART, UPDATE_ITEM,
-    IS_PURCHASE_DONE
+    IS_PURCHASE_DONE, UPDATE_ALERT_CART, REMOVE_ALERT_FROM_CART,
+    PURCHASE_COMPLETE,
+    INITIAL_CART,
+    INITIAL_PURCHASE
 } from "../type"
 
 export const addToCart = (item) => {
@@ -72,9 +75,38 @@ export const updateItem = (item) => {
     }
 }
 
-export const isPurchaseDone = (bool) => {
 
+export const isPurchaseDone = (bool) => {
     return {
         type: IS_PURCHASE_DONE,
     }
+}
+
+export const updateAlertCart = (items) => {
+    console.log('salfasljfn')
+    return {
+        type: UPDATE_ALERT_CART,
+        payload: items
+    }
+}
+export const removeAlertFromCart = () => {
+    return {
+        type: REMOVE_ALERT_FROM_CART
+    }
+}
+export const purchaseComplete = () => {
+    return (dispatch, getState) => {
+        const state = getState()
+        console.log(state)
+
+    }
+    // return {
+    //     type: PURCHASE_COMPLETE,
+    // }
+}
+export const initialCart = () => {
+    return { type: INITIAL_CART }
+}
+export const initialPurchase = () => {
+    return { type: INITIAL_PURCHASE }
 }

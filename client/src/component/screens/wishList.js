@@ -34,10 +34,12 @@ const WishList = () => {
             }
         }
         fetchData()
-    }, [])
+    }, [wishList])
 
     const handleWishList = (id) => {
+        setLoad(false)
         dispatch(removeFromWishList(id))
+
     }
 
     const navigateToItemPage = (id) => {

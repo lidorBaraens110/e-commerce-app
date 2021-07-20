@@ -5,6 +5,7 @@ import { Button, Typography, makeStyles, useTheme, useMediaQuery } from '@materi
 import HeightIcon from '@material-ui/icons/Height';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import ControlImages from './controlImages';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -124,7 +125,7 @@ function ItemPageContent({ item, currentColor, handleClickColor, setDialogState,
     const classes = useStyles();
     const theme = useTheme();
     const mobileView = useMediaQuery(theme.breakpoints.down('xs'))
-
+    console.log(item)
     return (
         <div className={classes.container}>
             <div className={classes.topContainer}>
@@ -167,7 +168,8 @@ function ItemPageContent({ item, currentColor, handleClickColor, setDialogState,
                     <Button className={classes.cartButton} onClick={() => handleCart(currentColor)}>
                         {update ? 'עדכן' : 'הוסף לסל'}
                     </Button>
-                    <FavoriteBorderIcon style={{ flex: 1 }} fontSize={mobileView ? 'default' : 'large'} />
+                    {!item.wishList ? <FavoriteBorderIcon style={{ flex: 1 }} fontSize={mobileView ? 'default' : 'large'} />
+                        : <FavoriteIcon style={{ flex: 1, color: 'red' }} fontSize={mobileView ? 'default' : 'large'} />}
                 </div>
             </div>
             <div style={{ flex: 1 }}></div>

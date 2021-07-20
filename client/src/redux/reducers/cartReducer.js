@@ -1,4 +1,4 @@
-import { ADD_TO_CART, REMOVE_FROM_CART, HANDLE_QUANTITY, UPDATE_ITEM } from '../type';
+import { INITIAL_CART, ADD_TO_CART, REMOVE_FROM_CART, HANDLE_QUANTITY, UPDATE_ITEM, UPDATE_ALERT_CART, REMOVE_ALERT_FROM_CART } from '../type';
 
 const initialState = [];
 
@@ -58,6 +58,31 @@ const cartReducer = (state = initialState, { type, payload }) => {
             }
             return [...updateState]
 
+        case UPDATE_ALERT_CART:
+            const x = state.map(item => {
+                const current = payload.reduce((acc, val) => {
+                    if (val.currentColor === item.currentColor) {
+                        let y = { ...item, totalQuantity: val.totalQuantity, alert: true }
+                        acc.push(y)
+                        return acc
+                    } else
+                        return acc
+                }, [])
+                if (current[0]) {
+                    return current[0]
+                }
+                return item
+            })
+            return [...x]
+
+        case REMOVE_ALERT_FROM_CART:
+            return state.map(item => {
+                delete item.alert
+                return item
+            })
+
+        case INITIAL_CART:
+            return initialState
         default:
             return state
     }

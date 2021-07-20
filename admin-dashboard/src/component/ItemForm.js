@@ -87,13 +87,13 @@ const ItemForm = ({ newCollection,
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
     const handleColorChange = (e) => {
         console.log(e)
-        // let { name, type, value } = e.target
-        // if (type === 'number') {
-        //     value = Number(value)
-        // }
-        // setNewColor(preVal => {
-        //     return { ...preVal, [name]: value }
-        // })
+        let { name, type, value } = e.target
+        if (type === 'number') {
+            value = Number(value)
+        }
+        setNewColor(preVal => {
+            return { ...preVal, [name]: value }
+        })
     }
     const addColor = (e) => {
 
