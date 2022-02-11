@@ -17,7 +17,7 @@
     "express": "^4.17.1",
     "jss-rtl": "^0.3.0",
     "mongoose": "^5.9.25",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "query-string": "^7.0.1",
     "react": "^16.13.1",
     "react-awesome-button": "^6.5.1",
